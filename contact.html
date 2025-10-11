@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - Rentoc Reflux</title>
+    <link rel="shortcut icon" href="./assets/logo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f9;
+        color: #333;
+        overflow-x: hidden;
+        line-height: 1.6;
+        position: relative;
+      }
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1;
+      }
+      .navbar {
+        background: transparent;
+        padding: 10px 20px;
+        text-align: center;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 3;
+      }
+      .navbar a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 1.1em;
+      }
+      .navbar a:hover {
+        color: #f59e0b;
+      }
+      .hero {
+        position: relative;
+        text-align: center;
+        min-height: 100vh;
+        overflow: hidden;
+        z-index: 0;
+      }
+      .hero video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+      .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 4;
+        text-align: center;
+      }
+      .typing {
+        font-size: 5em;
+        margin-bottom: 20px;
+        color: #fff;
+        letter-spacing: 15px;
+        opacity: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        animation: fadeIn 1s ease forwards 1s;
+      }
+      .typing::after {
+        content: "|";
+        animation: blink 0.5s infinite;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .section {
+        padding: 40px 20px;
+        text-align: center;
+        background: #fff;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      .section.visible {
+        animation: slideIn 0.8s ease forwards;
+      }
+      .section h2 {
+        color: #1a2a44;
+        font-size: 2em;
+      }
+      .section p {
+        max-width: 800px;
+        margin: 0 auto;
+        color: #555;
+      }
+      .contact-form {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: left;
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      .contact-form.visible {
+        animation: slideIn 0.6s ease forwards;
+      }
+      .contact-form label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+      }
+      .contact-form input,
+      .contact-form select,
+      .contact-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .contact-form button {
+        padding: 10px 20px;
+        background: #f59e0b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+      .contact-form button:hover {
+        opacity: 0.9;
+      }
+      .contact-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .contact-item {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      .contact-item.visible {
+        animation: slideIn 0.6s ease forwards;
+      }
+      .contact-item i {
+        font-size: 2em;
+        color: #f59e0b;
+        margin-bottom: 10px;
+        display: block;
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      .contact-item.visible i {
+        animation: bounceIn 0.4s ease forwards 0.2s;
+      }
+      .contact-item:hover i {
+        transform: scale(1.1);
+      }
+      .contact-item h3 {
+        color: #1a2a44;
+        margin: 10px 0;
+      }
+      .contact-item a {
+        color: #555;
+        text-decoration: none;
+        word-break: break-all;
+      }
+      .contact-item a:hover {
+        color: #f59e0b;
+      }
+      /* Loading Spinner */
+      #loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+      #loading .spinner {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #004080;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+      /* Success Modal */
+      #successModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        text-align: center;
+      }
+      #successModal button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #f59e0b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+      #successModal button:hover {
+        opacity: 0.9;
+      }
+      .footer {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: #fff;
+        padding: 40px 20px 20px;
+        font-family: Arial, sans-serif;
+      }
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto 30px;
+      }
+      .footer-col h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        position: relative;
+      }
+      .footer-col h3::after {
+        content: "";
+        width: 40px;
+        height: 3px;
+        background: #fff;
+        display: block;
+        margin-top: 5px;
+        border-radius: 3px;
+      }
+      .footer-col a {
+        display: block;
+        color: #ddd;
+        text-decoration: none;
+        margin: 6px 0;
+        transition: color 0.3s ease;
+      }
+      .footer-col a:hover {
+        color: #fff;
+      }
+      .social-links a {
+        display: inline-block;
+        color: #fff;
+        margin-right: 10px;
+        font-size: 1.1rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+      }
+      .social-links a:hover {
+        transform: scale(1.2);
+        color: #ffd700;
+      }
+      .date-time {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+      .footer-bottom {
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 15px;
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+      /* Loader styles */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 99999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+      #loader h1 {
+        font-size: 2rem;
+        color: #004080;
+        margin-bottom: 1rem;
+        font-family: Arial, sans-serif;
+      }
+      #loader .spinner {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #004080;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+      body.loaded #loader {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        display: none !important;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      /* Animations */
+      @keyframes slideIn {
+        to {
+          opacity: 1;
+          transform: translateY(0) translateX(0);
+        }
+      }
+      @keyframes bounceIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        60% {
+          transform: scale(1.1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @media (max-width: 600px) {
+        .hero h1 {
+          font-size: 1.5em;
+        }
+        .navbar a {
+          margin: 0 10px;
+          font-size: 1em;
+        }
+        .typing {
+          font-size: 2em;
+        }
+        .hero video {
+          display: none;
+        }
+        .hero {
+          background-image: url("./assets/fallback-image.jpg");
+          background-size: cover;
+          background-position: center;
+        }
+        .footer-col h3 {
+          font-size: 1rem;
+        }
+        .contact-form,
+        .contact-item {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loader -->
+    <div id="loader">
+      <h1>Rentoc Reflux</h1>
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <video autoplay muted loop>
+        <source
+          src="./assets/vid.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-overlay"></div>
+      <div class="navbar">
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./services.html">Services</a>
+        <a href="./products.html">Products</a>
+        <a href="./ourcustomers.html">Our Customers</a>
+        <a href="./contact.html">Contact</a>
+      </div>
+      <div class="hero-content">
+        <div class="typing" id="typing-text">Contact Us</div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="section" id="contact-section">
+      <h2>Get in Touch</h2>
+      <p>
+        At Rentoc Reflux, we specialize in supplying high-quality materials to the
+        steel industry, with a focus on fluorides, carbon, and aluminum-based
+        solutions. Our commitment to efficiency and innovation ensures that we
+        deliver reliable products tailored to meet the evolving demands of the
+        sector. Contact us today to discuss how we can support your projects.
+      </p>
+      <form id="contactForm" class="contact-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="from_name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="from_email" required />
+
+        <label for="material">Material Interest</label>
+        <select id="material" name="material_interest">
+          <option value="fluorides">Fluorides</option>
+          <option value="carbon">Carbon</option>
+          <option value="aluminum">Aluminum</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+
+      <!-- Contact Information Section -->
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>General Inquiries</h3>
+          <a href="mailto:info@parthindia.com">info@parthindia.com</a>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>Sales</h3>
+          <a href="mailto:sales@parthindia.com">sales@parthindia.com</a>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>Customer Support</h3>
+          <a href="mailto:support@parthindia.com">support@parthindia.com</a>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>Partnerships</h3>
+          <a href="mailto:partners@parthindia.com">partners@parthindia.com</a>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>Careers</h3>
+          <a href="mailto:careers@parthindia.com">careers@parthindia.com</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal">
+      <h2>Message Sent Successfully!</h2>
+      <p>Thank you for contacting Rentoc Reflux. We'll get back to you soon.</p>
+      <button id="closeModal">Close</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-container">
+        <div class="footer-col">
+          <h3>Rentoc Reflux</h3>
+          <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+        <a href="./services.html">Services</a>
+        <a href="./products.html">Products</a>
+        <a href="./ourcustomers.html">Our Customers</a>
+        <a href="./contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h3>Follow Us</h3>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" aria-label="LinkedIn"
+              ><i class="fab fa-linkedin-in"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Current Date & Time</h3>
+          <div class="date-time" id="date-time"></div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2025 Rentoc Reflux. All Rights Reserved.
+      </div>
+    </div>
+
+    <!-- EmailJS Script -->
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/@emailjs/browser@4/dist/email.min.js"
+      crossorigin="anonymous"
+      onload="console.log('EmailJS CDN loaded successfully')"
+      onerror="console.error('Failed to load EmailJS CDN'); alert('Failed to load EmailJS library. Please use the email addresses below to contact us directly.')"
+    ></script>
+    <!-- Fallback Local EmailJS (uncomment and host locally if CDN fails consistently) -->
+    <!--
+    <script src="./assets/email.min.js"></script>
+    -->
+
+    <script>
+      // Loader logic with single execution
+      let isLoaderHidden = false;
+      let loaderTimeout = null;
+
+      function hideLoader() {
+        if (isLoaderHidden) {
+          console.log("Loader already hidden, skipping");
+          return;
+        }
+        console.log("Attempting to hide loader");
+        isLoaderHidden = true;
+        clearTimeout(loaderTimeout);
+        document.body.classList.add("loaded");
+        const loader = document.getElementById("loader");
+        loader.style.opacity = "0";
+        loader.style.visibility = "hidden";
+        console.log("Loader opacity and visibility set to hidden");
+        setTimeout(() => {
+          loader.style.display = "none";
+          console.log("Loader hidden (display: none)");
+        }, 500);
+      }
+
+      // Typing animation
+      function setupTypingAnimation() {
+        console.log("Setting up typing animation");
+        const typingText = document.getElementById("typing-text");
+        const text = "Contact Us";
+        let index = 0;
+
+        function type() {
+          if (index < text.length) {
+            typingText.textContent = text.slice(0, index + 1);
+            index++;
+            setTimeout(type, 150); // Adjust speed (150ms per character)
+          } else {
+            typingText.style.animation =
+              "fadeIn 1s ease forwards, blink 0.5s infinite";
+            console.log("Typing animation completed");
+          }
+        }
+        setTimeout(() => {
+          typingText.style.opacity = "0";
+          type();
+        }, 1000);
+      }
+
+      // IntersectionObserver for animations
+      function setupAnimations() {
+        console.log("Setting up animations");
+        const observerOptions = {
+          root: null,
+          threshold: 0.1,
+          rootMargin: "0px",
+        };
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              console.log(`Animating element: ${entry.target.className}`);
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+        document
+          .querySelectorAll(".section, .contact-form, .contact-item")
+          .forEach((el) => {
+            observer.observe(el);
+          });
+      }
+
+      // Update date & time live
+      function updateDateTime() {
+        const now = new Date();
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+          timeZoneName: "short",
+        };
+        document.getElementById("date-time").textContent = now.toLocaleString(
+          "en-IN",
+          options
+        );
+      }
+
+      // Form submission with EmailJS
+      function setupFormSubmission() {
+        console.log("Setting up form submission");
+        const form = document.getElementById("contactForm");
+        const loading = document.getElementById("loading");
+        const successModal = document.getElementById("successModal");
+        const closeModal = document.getElementById("closeModal");
+
+        if (typeof emailjs === "undefined") {
+          console.error(
+            "EmailJS is not loaded. Please check the CDN or use a local fallback."
+          );
+          alert(
+            "Form submission is currently unavailable. Please use the email addresses below to contact us directly:\n" +
+              "- General Inquiries: info@parthindia.com\n" +
+              "- Sales: sales@parthindia.com\n" +
+              "- Customer Support: support@parthindia.com\n" +
+              "- Partnerships: partners@parthindia.com\n" +
+              "- Careers: careers@parthindia.com"
+          );
+          return;
+        }
+
+        console.log("Initializing EmailJS...");
+        emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+        console.log("EmailJS initialized");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          console.log("Form submission started");
+          loading.style.display = "flex";
+          emailjs
+            .sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this)
+            .then(() => {
+              console.log("Form submitted successfully");
+              loading.style.display = "none";
+              successModal.style.display = "block";
+              form.reset();
+            })
+            .catch((error) => {
+              console.error("Form submission failed:", error);
+              loading.style.display = "none";
+              alert(
+                "Failed to send message. Please try again or use the email addresses below to contact us directly:\n" +
+                  "- General Inquiries: info@parthindia.com\n" +
+                  "- Sales: sales@parthindia.com\n" +
+                  "- Customer Support: support@parthindia.com\n" +
+                  "- Partnerships: partners@parthindia.com\n" +
+                  "- Careers: careers@parthindia.com\n" +
+                  "Error: " +
+                  error.text
+              );
+            });
+        });
+
+        closeModal.addEventListener("click", function () {
+          successModal.style.display = "none";
+        });
+      }
+
+      // Execute after page load
+      window.addEventListener("load", function () {
+        console.log("Page loaded, initializing scripts");
+        hideLoader();
+        setupTypingAnimation();
+        setupAnimations();
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        setupFormSubmission();
+      });
+
+      // Fallback loader timeout
+      loaderTimeout = setTimeout(hideLoader, 3000);
+    </script>
+  </body>
+</html>
